@@ -1,0 +1,65 @@
+/* src/App.css */
+.app {
+  display: flex;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  justify-content: center;
+  align-items: center;
+  background-color: #f9f9f9;
+}
+.title{
+  text-align: center;
+  color: #fff;
+  background-color: #418ae4;
+  padding: 5px;
+
+}
+.text-section, .analysis-section {
+  flex: 3;
+  width: 1000px;
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 50, 0.15);
+}
+.nolan-chart{
+  width: 1000px;
+}
+
+.text-input textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+  resize: none;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 10px;
+  align-items: center; 
+
+
+}
+.button-group {
+  display: flex;
+  gap: 10px; 
+}
+
+.button-area button{
+  align-content: flex-end;
+  width: 100%;
+  padding: 10px;
+  background-color: #418ae4;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.button-area button:hover,
+.language-selector select:hover {
+  background-color: #032b55;
+}
+
