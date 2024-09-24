@@ -225,7 +225,11 @@ def remove_sarcasm(text):
     """
     tokens = tokenizar(text)
     if len(tokens) > 512:
-        return text
+        print("Supera los tokens: ",len(tokens))
+        print("Este es el texto",text)
+        tokensTrunc = tokens[:512]
+        return ' '.join(tokensTrunc)
+
     doc = nlp(text)
     sentiment = sentiment_classifier(text)[0]
     sarcasm_by_pattern = detect_sarcasm_patterns(text)
@@ -239,7 +243,13 @@ def remove_sarcasm(text):
 # + id="fPN3jWC9tutZ"
 def preprocesar_texto(texto: str) -> Dict[str, Any]:
     texto_limpio = limpiar_texto(texto)
-    texto_sin_ambiguedad = remove_sarcasm(texto_limpio)
+    tokensAntes = tokenizar(texto_limpio)
+    if len(tokensAntes) < 300:
+        texto_sin_ambiguedad = remove_sarcasm(texto_limpio)
+    else:
+        print("No se hace proceso de desambiguacion")
+        texto_sin_ambiguedad = texto_limpio
+
     tokens = tokenizar(texto_sin_ambiguedad)
     tokens_sin_stop = eliminar_stop_words(tokens)
     tokens_lematizados = lematizar(tokens_sin_stop)
@@ -297,13 +307,13 @@ df_balanced
 def procesar_por_batches(df, batch_size, output_prefix):
     num_batches = int(np.ceil(len(df) / batch_size))
     for i in range(num_batches):
-        if i <= 58:
+        if i <= 59:
             continue
         batch = df[i * batch_size : (i + 1) * batch_size].copy()  # Obtener batch
         batch['text_processed'] = batch['Text'].apply(preprocesar_texto)  # Procesar batch
         batch.to_csv(f'results/{output_prefix}_batch_{i + 1}.csv', index=False)  # Guardar batch procesado
         print(f'Batch {i + 1}/{num_batches} procesado y guardado.')
-        if i == 59:
+        if i == 100:
             break
 
 

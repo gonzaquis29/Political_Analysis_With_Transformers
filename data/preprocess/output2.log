@@ -1,0 +1,94 @@
+nohup: ignoring input
+[nltk_data] Downloading package punkt to /home/gquispe/nltk_data...
+[nltk_data]   Package punkt is already up-to-date!
+[nltk_data] Downloading package punkt_tab to
+[nltk_data]     /home/gquispe/nltk_data...
+[nltk_data]   Package punkt_tab is already up-to-date!
+[nltk_data] Downloading package stopwords to
+[nltk_data]     /home/gquispe/nltk_data...
+[nltk_data]   Package stopwords is already up-to-date!
+[nltk_data] Downloading package wordnet to /home/gquispe/nltk_data...
+[nltk_data]   Package wordnet is already up-to-date!
+[nltk_data] Downloading package averaged_perceptron_tagger to
+[nltk_data]     /home/gquispe/nltk_data...
+[nltk_data]   Package averaged_perceptron_tagger is already up-to-
+[nltk_data]       date!
+[nltk_data] Downloading package maxent_ne_chunker to
+[nltk_data]     /home/gquispe/nltk_data...
+[nltk_data]   Package maxent_ne_chunker is already up-to-date!
+[nltk_data] Downloading package words to /home/gquispe/nltk_data...
+[nltk_data]   Package words is already up-to-date!
+[nltk_data] Downloading package omw-1.4 to /home/gquispe/nltk_data...
+[nltk_data]   Package omw-1.4 is already up-to-date!
+/home/gquispe/.local/lib/python3.10/site-packages/transformers/tokenization_utils_base.py:1601: FutureWarning: `clean_up_tokenization_spaces` was not set. It will be set to `True` by default. This behavior will be depracted in transformers v4.45, and will be then set to `False` by default. For more details check this issue: https://github.com/huggingface/transformers/issues/31884
+  warnings.warn(
+You seem to be using the pipelines sequentially on GPU. In order to maximize efficiency please use a dataset
+Sin reglas de juego claras y justas en lo económico y en lo social, donde lo único permanente es el beneficio creciente de los sectores mas concentrados de ·la economía.
+503 -1 1
+ 0    272578
+-1     94401
+ 1     81118
+Name: libertad_economica_score, dtype: int64
+ 0    346331
+-1     58982
+ 1     42784
+Name: libertad_personal_score, dtype: int64
+ 0    123
+-1    118
+ 1     59
+Name: libertad_economica_score, dtype: int64
+ 0    157
+-1     77
+ 1     66
+Name: libertad_personal_score, dtype: int64
+No se hace proceso de desambiguacion
+Batch 61/90 procesado y guardado.
+No se hace proceso de desambiguacion
+Batch 62/90 procesado y guardado.
+Batch 63/90 procesado y guardado.
+Batch 64/90 procesado y guardado.
+Batch 65/90 procesado y guardado.
+Batch 66/90 procesado y guardado.
+No se hace proceso de desambiguacion
+Batch 67/90 procesado y guardado.
+Batch 68/90 procesado y guardado.
+No se hace proceso de desambiguacion
+Batch 69/90 procesado y guardado.
+Batch 70/90 procesado y guardado.
+Batch 71/90 procesado y guardado.
+No se hace proceso de desambiguacion
+No se hace proceso de desambiguacion
+Batch 72/90 procesado y guardado.
+Batch 73/90 procesado y guardado.
+Batch 74/90 procesado y guardado.
+Batch 75/90 procesado y guardado.
+Batch 76/90 procesado y guardado.
+Batch 77/90 procesado y guardado.
+Batch 78/90 procesado y guardado.
+No se hace proceso de desambiguacion
+Batch 79/90 procesado y guardado.
+No se hace proceso de desambiguacion
+Batch 80/90 procesado y guardado.
+Batch 81/90 procesado y guardado.
+No se hace proceso de desambiguacion
+No se hace proceso de desambiguacion
+No se hace proceso de desambiguacion
+No se hace proceso de desambiguacion
+No se hace proceso de desambiguacion
+No se hace proceso de desambiguacion
+No se hace proceso de desambiguacion
+Batch 82/90 procesado y guardado.
+Batch 83/90 procesado y guardado.
+Batch 84/90 procesado y guardado.
+Batch 85/90 procesado y guardado.
+Batch 86/90 procesado y guardado.
+Batch 87/90 procesado y guardado.
+No se hace proceso de desambiguacion
+Batch 88/90 procesado y guardado.
+No se hace proceso de desambiguacion
+No se hace proceso de desambiguacion
+No se hace proceso de desambiguacion
+No se hace proceso de desambiguacion
+No se hace proceso de desambiguacion
+Batch 89/90 procesado y guardado.
+Batch 90/90 procesado y guardado.
