@@ -223,6 +223,9 @@ def remove_sarcasm(text):
     """
     Detectar y reformular sarcasmo en un texto dado.
     """
+    tokens = tokenizar(text)
+    if len(tokens) > 512:
+        return text
     doc = nlp(text)
     sentiment = sentiment_classifier(text)[0]
     sarcasm_by_pattern = detect_sarcasm_patterns(text)
@@ -293,12 +296,16 @@ df_balanced
 # Función para procesar y guardar por batches
 def procesar_por_batches(df, batch_size, output_prefix):
     num_batches = int(np.ceil(len(df) / batch_size))
-    
     for i in range(num_batches):
+        if i <= 58:
+            continue
         batch = df[i * batch_size : (i + 1) * batch_size].copy()  # Obtener batch
         batch['text_processed'] = batch['Text'].apply(preprocesar_texto)  # Procesar batch
         batch.to_csv(f'results/{output_prefix}_batch_{i + 1}.csv', index=False)  # Guardar batch procesado
         print(f'Batch {i + 1}/{num_batches} procesado y guardado.')
+        if i == 59:
+            break
+
 
 # Cargar tu DataFrame
 # df_crude = pd.read_csv('tu_dataframe.csv')
