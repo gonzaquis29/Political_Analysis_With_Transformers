@@ -67,7 +67,7 @@ from transformers import MarianMTModel, MarianTokenizer
 
 model_name = 'Helsinki-NLP/opus-mt-en-es'
 tokenizer = MarianTokenizer.from_pretrained(model_name)
-model = MarianMTModel.from_pretrained(model_name)
+model = MarianMTModel.from_pretrained(model_name).to('cuda')
 
 # In[29]:
 
@@ -76,7 +76,7 @@ model = MarianMTModel.from_pretrained(model_name)
 sentence = "This is a cat."
 
 # Traducir la oración
-inputs = tokenizer([sentence], return_tensors="pt", padding=True)
+inputs = tokenizer([sentence], return_tensors="pt", padding=True).to('cuda')
 translated = model.generate(**inputs)
 translated_sentence = tokenizer.decode(translated[0], skip_special_tokens=True)
 
@@ -91,7 +91,7 @@ print(translated_sentence)
 
 
 def translate_batch(batch):
-    inputs = tokenizer(batch, return_tensors="pt", padding=True, truncation=True)
+    inputs = tokenizer(batch, return_tensors="pt", padding=True, truncation=True).to('cuda')
     translated = model.generate(**inputs)
     return [tokenizer.decode(t, skip_special_tokens=True) for t in translated]
 
