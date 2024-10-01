@@ -1,1 +1,6 @@
+# Ignorar todos los archivos .gitignore en cualquier directorio
+**/.gitignore
+
+# Excepto el archivo .gitignore en la raíz del proyecto
+!/.gitignore
 .env
