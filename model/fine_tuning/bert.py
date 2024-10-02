@@ -15,8 +15,8 @@ from torch import nn
 from transformers import BertTokenizer, BertModel
 from torch.utils.data import Dataset, DataLoader
 
-#data_corpus = pd.read_csv('../../data/preprocess/corpus_preproccesed/manifesto_preprocessed.csv')
-data_corpus = pd.read_csv('manifesto_preprocessed.csv')
+data_corpus = pd.read_csv('../../data/corpus/manifesto_preprocessed.csv')
+#data_corpus = pd.read_csv('manifesto_preprocessed.csv')
 
 data_corpus_pre = data_corpus.sample(n=20000, random_state=42)
 
