@@ -24,6 +24,7 @@ from sklearn.model_selection import train_test_split
 
 
 df_crude = pd.read_csv('../extraction/structured/reddit_posts_estructurado.csv')
+df_crude['text'] = df_crude['text'].astype(str)
 
 # Pruebas
 indexPrueba = 4

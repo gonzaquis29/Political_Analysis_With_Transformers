@@ -24,7 +24,7 @@ from sklearn.model_selection import train_test_split
 
 
 df_crude = pd.read_csv('../extraction/structured/political_bias_estructurado.csv')
-
+df_crude['text'] = df_crude['text'].astype(str)
 # Pruebas
 indexPrueba = 4
 print(df_crude['text'][indexPrueba], df_crude['libertad_economica_score'][indexPrueba],
