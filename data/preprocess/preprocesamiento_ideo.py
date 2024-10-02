@@ -27,10 +27,8 @@ df_crude = pd.read_csv('../extraction/structured/poli_idio_estructurado.csv')
 
 # Pruebas
 indexPrueba = 4
-print(df_crude['text'][indexPrueba])
-print(df_crude['Code'][indexPrueba],
-df_crude['libertad_economica_score'][indexPrueba],
-df_crude['libertad_personal_score'][indexPrueba])
+print(df_crude['text'][indexPrueba], df_crude['libertad_economica_score'][indexPrueba],
+df_crude['libertad_personal_score'][indexPrueba] )
 
 # Cargar las librerías de nltk
 nltk.download('punkt')
@@ -225,29 +223,8 @@ print(df_crude['libertad_personal_score'].value_counts())
 
 
 
-# Función para obtener un subconjunto balanceado
-def get_balanced_subset(df, column, n_per_category=50):
-    balanced_df = pd.DataFrame()
-    for category in [-1, 0, 1]:
-        category_df = df[df[column] == category]
-        if len(category_df) > n_per_category:
-            category_df = category_df.sample(n=n_per_category, random_state=42)
-        balanced_df = pd.concat([balanced_df, category_df])
-    return balanced_df
-
-# Obtener subconjuntos balanceados para ambas columnas
-df_economica = get_balanced_subset(df_crude, 'libertad_economica_score')
-df_personal = get_balanced_subset(df_crude, 'libertad_personal_score')
-
-# Combinar los subconjuntos
-df_balanced = pd.concat([df_economica, df_personal]).drop_duplicates()
-
-# Verificar los recuentos
-print(df_balanced['libertad_economica_score'].value_counts())
-print(df_balanced['libertad_personal_score'].value_counts())
-
-
-#df_crude['text_processed'] = df_crude['Text'].apply(preprocesar_texto)
+df_crude['text_processed'] = df_crude['text'].apply(preprocesar_texto)
+df_crude.to_csv("political_ideo_preprocessed.csv")
 
 folder = 'results_ideo'
 
@@ -256,7 +233,7 @@ def procesar_por_batches(df, batch_size, output_prefix):
     num_batches = int(np.ceil(len(df) / batch_size))
     for i in range(num_batches):
         batch = df[i * batch_size : (i + 1) * batch_size].copy()  # Obtener batch
-        batch['text_processed'] = batch['Text'].apply(preprocesar_texto)  # Procesar batch
+        batch['text_processed'] = batch['text'].apply(preprocesar_texto)  # Procesar batch
         batch.to_csv(f'{folder}/{output_prefix}_batch_{i + 1}.csv', index=False)  # Guardar batch procesado
         print(f'Batch {i + 1}/{num_batches} procesado y guardado.')
 
@@ -265,10 +242,10 @@ def procesar_por_batches(df, batch_size, output_prefix):
 # df_crude = pd.read_csv('tu_dataframe.csv')
 
 # Parámetros
-batch_size = 5000
+batch_size = 1000
 output_prefix = 'resultados_parciales'
 
 # Procesar por batches y guardar resultados
-procesar_por_batches(df_crude, batch_size, output_prefix)
+#procesar_por_batches(df_crude, batch_size, output_prefix)
 
-df_crude.to_csv('df_balanced_3.csv', index=False)
+#df_crude.to_csv('df_balanced_3.csv', index=False)
