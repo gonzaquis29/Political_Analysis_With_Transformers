@@ -8,9 +8,10 @@ from torch import nn
 from transformers import BertTokenizer, BertModel
 from torch.utils.data import Dataset, DataLoader
 
-data_corpus_pre = pd.read_csv('../../data/corpus/manifesto_balanceado.csv')
-#data_corpus = pd.read_csv('manifesto_preprocessed.csv')
+FILE_NAME = "manifesto_balanceado"
 
+data_corpus_pre = pd.read_csv('../../data/corpus/{manifesto_balanceado}.csv')
+#data_corpus = pd.read_csv('manifesto_preprocessed.csv')
 data_corpus_pre = data_corpus_pre.sample(n=10000, random_state=42)
 
 data_corpus_pre['text_processed'] = data_corpus_pre['text_processed'].astype(str)
@@ -174,13 +175,23 @@ def evaluate(model, eval_loader, criterion, device):
     return avg_loss, personal_f1, economic_f1
 
 # Entrenamiento del modelo
-for epoch in range(EPOCHS):
-    train(model, train_loader, optimizer, criterion, device)
-    eval_loss, personal_f1, economic_f1 = evaluate(model, eval_loader, criterion, device)
-    print(f'Epoch {epoch+1}/{EPOCHS}, Validation Loss: {eval_loss:.4f}, Personal Liberty F1: {personal_f1:.4f}, Economic Liberty F1: {economic_f1:.4f}')
 
+with open('training_logs_'+FILE_NAME+'.txt', 'a') as log_file:
+    for epoch in range(EPOCHS):
+        train(model, train_loader, optimizer, criterion, device)
+        eval_loss, personal_f1, economic_f1 = evaluate(model, eval_loader, criterion, device)
+        train_loss, train_personal_f1, train_economic_f1 = evaluate(model, train_loader, criterion, device)
+            
+        log_file.write(f'Epoch {epoch+1}/{EPOCHS}, '
+                        f'Train Personal F1: {train_personal_f1:.4f}, Train Economic F1: {train_economic_f1:.4f}, '
+                        f'Validation Loss: {eval_loss:.4f}, '
+                        f'Validation Personal F1: {personal_f1:.4f}, Validation Economic F1: {economic_f1:.4f}\n')
+
+        print(f'Epoch {epoch+1}/{EPOCHS}, Validation Loss: {eval_loss:.4f}, '
+                f'Personal Liberty F1: {personal_f1:.4f}, Economic Liberty F1: {economic_f1:.4f}')
 # Guardar el modelo
-torch.save(model.state_dict(), 'liberty_predictor_model.pth')
+MODEL_NAME = FILE_NAME + '_liberty_predictor.pth'
+#torch.save(model.state_dict(), MODEL_NAME)
 
 print("Entrenamiento completado y modelo guardado.")
 
