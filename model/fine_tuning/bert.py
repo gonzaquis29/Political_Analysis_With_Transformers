@@ -11,7 +11,7 @@ from torch.utils.data import Dataset, DataLoader
 data_corpus_pre = pd.read_csv('../../data/corpus/manifesto_balanceado.csv')
 #data_corpus = pd.read_csv('manifesto_preprocessed.csv')
 
-#data_corpus_pre = data_corpus.sample(n=50000, random_state=42)
+data_corpus_pre = data_corpus_pre.sample(n=10000, random_state=42)
 
 data_corpus_pre['text_processed'] = data_corpus_pre['text_processed'].astype(str)
 
@@ -89,8 +89,8 @@ class LibertyDataset(Dataset):
 
 # Configurar hiperparámetros
 MAX_LEN = 128
-TRAIN_BATCH_SIZE = 128
-VALID_BATCH_SIZE = 64
+TRAIN_BATCH_SIZE = 64
+VALID_BATCH_SIZE = 32
 EPOCHS = 20
 LEARNING_RATE = 1e-04
 PRETRAINED_MODEL = "dccuchile/bert-base-spanish-wwm-uncased"  # Cambiar a DistilBERT
