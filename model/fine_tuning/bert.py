@@ -8,15 +8,13 @@ from torch import nn
 from transformers import BertTokenizer, BertModel
 from torch.utils.data import Dataset, DataLoader
 
-FILE_NAME = "manifesto_balanceado"
+FILE_NAME = "poli_bias"
 
-data_corpus_pre = pd.read_csv('../../data/corpus/{manifesto_balanceado}.csv')
+data_corpus_pre = pd.read_csv('../../data/corpus/political_bias_preprocessed.csv')
 #data_corpus = pd.read_csv('manifesto_preprocessed.csv')
-data_corpus_pre = data_corpus_pre.sample(n=10000, random_state=42)
+#data_corpus_pre = data_corpus_pre.sample(n=10000, random_state=42)
 
 data_corpus_pre['text_processed'] = data_corpus_pre['text_processed'].astype(str)
-
-data_corpus_pre
 
 from sklearn.model_selection import train_test_split
 
@@ -90,7 +88,7 @@ class LibertyDataset(Dataset):
 
 # Configurar hiperparámetros
 MAX_LEN = 128
-TRAIN_BATCH_SIZE = 64
+TRAIN_BATCH_SIZE = 32
 VALID_BATCH_SIZE = 32
 EPOCHS = 20
 LEARNING_RATE = 1e-04
@@ -191,7 +189,7 @@ with open('training_logs_'+FILE_NAME+'.txt', 'a') as log_file:
                 f'Personal Liberty F1: {personal_f1:.4f}, Economic Liberty F1: {economic_f1:.4f}')
 # Guardar el modelo
 MODEL_NAME = FILE_NAME + '_liberty_predictor.pth'
-#torch.save(model.state_dict(), MODEL_NAME)
+torch.save(model.state_dict(), MODEL_NAME)
 
 print("Entrenamiento completado y modelo guardado.")
 
