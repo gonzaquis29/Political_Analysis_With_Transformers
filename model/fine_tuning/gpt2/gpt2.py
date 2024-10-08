@@ -26,13 +26,12 @@ class LibertyPredictor(nn.Module):
 
     def forward(self, input_ids, attention_mask):
         outputs = self.gpt2(input_ids=input_ids, attention_mask=attention_mask)
-        last_hidden_state = outputs.last_hidden_state
-        pooled_output = last_hidden_state.mean(dim=1)
+        hidden_states = outputs.hidden_states[-1]  # Get the last hidden state
+        pooled_output = hidden_states.mean(dim=1)  # Average pooling
         x = self.dropout(pooled_output)
         personal_liberty = self.fc_personal(x)
         economic_liberty = self.fc_economic(x)
         return personal_liberty, economic_liberty
-
 # Dataset definition
 class LibertyDataset(Dataset):
     def __init__(self, dataframe, tokenizer, max_len):
@@ -83,6 +82,9 @@ LEARNING_RATE = 1e-04
 tokenizer = AutoTokenizer.from_pretrained(PRETRAINED_MODEL)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = LibertyPredictor(PRETRAINED_MODEL).to(device)
+model.gpt2.config.output_hidden_states = True
+
+
 
 # Freeze GPT-2 layers except the last two
 for name, param in model.gpt2.named_parameters():
