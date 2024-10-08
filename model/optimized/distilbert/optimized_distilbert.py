@@ -7,11 +7,11 @@ from torch.utils.data import Dataset, DataLoader
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import f1_score
 
-FILE_NAME = "manifesto_balanceado_distilbert_optimized"
+FILE_NAME = "poli_ideo_distilbert_optimized"
 PRETRAINED_MODEL = "dccuchile/distilbert-base-spanish-uncased"
 
 # Load and preprocess data
-data_corpus_pre = pd.read_csv('../../../data/corpus/manifesto_balanceado.csv')
+data_corpus_pre = pd.read_csv('../../../data/corpus/political_ideo_preprocessed.csv')
 data_corpus_pre['text_processed'] = data_corpus_pre['text_processed'].astype(str)
 train_df, eval_df = train_test_split(data_corpus_pre, test_size=0.2, random_state=42)
 
@@ -178,6 +178,8 @@ def evaluate(model, eval_loader, criterion, device):
 
 # Training loop with early stopping
 best_eval_loss = float('inf')
+best_epoch = 0
+best_metrics = {}
 patience_counter = 0
 
 with open(f'training_logs_{FILE_NAME}.txt', 'a') as log_file:
@@ -199,6 +201,15 @@ with open(f'training_logs_{FILE_NAME}.txt', 'a') as log_file:
         # Early stopping
         if eval_loss < best_eval_loss:
             best_eval_loss = eval_loss
+            best_epoch = epoch + 1
+            best_metrics = {
+                'train_loss': train_loss,
+                'train_personal_f1': train_personal_f1,
+                'train_economic_f1': train_economic_f1,
+                'eval_loss': eval_loss,
+                'eval_personal_f1': eval_personal_f1,
+                'eval_economic_f1': eval_economic_f1
+            }
             patience_counter = 0
             # Save the best model
             torch.save(model.state_dict(), f'{FILE_NAME}_best_model.pth')
@@ -207,6 +218,19 @@ with open(f'training_logs_{FILE_NAME}.txt', 'a') as log_file:
             if patience_counter >= PATIENCE:
                 print(f"Early stopping triggered after {epoch+1} epochs")
                 break
+
+    # Print and log the best model summary
+    best_model_summary = (f"\nBest Model Summary:\n"
+                          f"Best Epoch: {best_epoch}\n"
+                          f"Best Validation Loss: {best_metrics['eval_loss']:.4f}\n"
+                          f"Best Train Loss: {best_metrics['train_loss']:.4f}\n"
+                          f"Best Train Personal F1: {best_metrics['train_personal_f1']:.4f}\n"
+                          f"Best Train Economic F1: {best_metrics['train_economic_f1']:.4f}\n"
+                          f"Best Validation Personal F1: {best_metrics['eval_personal_f1']:.4f}\n"
+                          f"Best Validation Economic F1: {best_metrics['eval_economic_f1']:.4f}\n")
+    
+    print(best_model_summary)
+    log_file.write(best_model_summary)
 
 print("Training completed.")
 
