@@ -1,48 +1,39 @@
-# -*- coding: utf-8 -*-
-
 import pandas as pd
 import numpy as np
-
 import torch
 from torch import nn
-from transformers import BertTokenizer, BertModel
+from transformers import AutoTokenizer, AutoModelForCausalLM
 from torch.utils.data import Dataset, DataLoader
-
-FILE_NAME = "poli_bias"
-
-data_corpus_pre = pd.read_csv('../../data/corpus/political_bias_preprocessed.csv')
-#data_corpus = pd.read_csv('manifesto_preprocessed.csv')
-#data_corpus_pre = data_corpus_pre.sample(n=10000, random_state=42)
-
-data_corpus_pre['text_processed'] = data_corpus_pre['text_processed'].astype(str)
-
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import f1_score
 
+FILE_NAME = "poli_bias_gpt2"
+PRETRAINED_MODEL = "datificate/gpt2-small-spanish"
+
+# Load and preprocess data
+data_corpus_pre = pd.read_csv('../../../data/corpus/political_bias_preprocessed.csv')
+data_corpus_pre['text_processed'] = data_corpus_pre['text_processed'].astype(str)
 train_df, eval_df = train_test_split(data_corpus_pre, test_size=0.2, random_state=42)
 
-import torch
-from torch import nn
-from transformers import AutoModel, AutoTokenizer
-from torch.utils.data import Dataset, DataLoader
-from sklearn.metrics import f1_score
-# Definir el modelo
+# Model definition
 class LibertyPredictor(nn.Module):
     def __init__(self, pretrained_model_name):
         super(LibertyPredictor, self).__init__()
-        self.bert = AutoModel.from_pretrained(pretrained_model_name)
+        self.gpt2 = AutoModelForCausalLM.from_pretrained(pretrained_model_name)
         self.dropout = nn.Dropout(0.1)
-        self.fc_personal = nn.Linear(self.bert.config.hidden_size, 3)  # 3 clases para libertad personal
-        self.fc_economic = nn.Linear(self.bert.config.hidden_size, 3)  # 3 clases para libertad económica
+        self.fc_personal = nn.Linear(self.gpt2.config.n_embd, 3)
+        self.fc_economic = nn.Linear(self.gpt2.config.n_embd, 3)
 
     def forward(self, input_ids, attention_mask):
-        outputs = self.bert(input_ids=input_ids, attention_mask=attention_mask)
-        pooled_output = outputs.last_hidden_state[:, 0]
+        outputs = self.gpt2(input_ids=input_ids, attention_mask=attention_mask)
+        last_hidden_state = outputs.last_hidden_state
+        pooled_output = last_hidden_state.mean(dim=1)
         x = self.dropout(pooled_output)
         personal_liberty = self.fc_personal(x)
         economic_liberty = self.fc_economic(x)
         return personal_liberty, economic_liberty
 
-# Definir el dataset personalizado
+# Dataset definition
 class LibertyDataset(Dataset):
     def __init__(self, dataframe, tokenizer, max_len):
         self.tokenizer = tokenizer
@@ -54,14 +45,12 @@ class LibertyDataset(Dataset):
     def _process_targets(self, scores):
         def score_to_class(score):
             if score < -0.33:
-                return 0  # -1
+                return 0
             elif score < 0.33:
-                return 1  # 0
+                return 1
             else:
-                return 2  # 1
-
+                return 2
         return [[score_to_class(personal), score_to_class(economic)] for personal, economic in scores]
-
 
     def __len__(self):
         return len(self.text)
@@ -74,60 +63,45 @@ class LibertyDataset(Dataset):
             add_special_tokens=True,
             max_length=self.max_len,
             padding='max_length',
-            return_token_type_ids=True,
-            truncation=True
+            truncation=True,
+            return_tensors='pt'
         )
-        ids = inputs['input_ids']
-        mask = inputs['attention_mask']
-
         return {
-            'ids': torch.tensor(ids, dtype=torch.long),
-            'mask': torch.tensor(mask, dtype=torch.long),
+            'ids': inputs['input_ids'].flatten(),
+            'mask': inputs['attention_mask'].flatten(),
             'targets': torch.tensor(self.targets[index], dtype=torch.long)
         }
 
-# Configurar hiperparámetros
+# Hyperparameters
 MAX_LEN = 128
 TRAIN_BATCH_SIZE = 32
 VALID_BATCH_SIZE = 32
 EPOCHS = 20
 LEARNING_RATE = 1e-04
-PRETRAINED_MODEL = "dccuchile/bert-base-spanish-wwm-uncased"  # Cambiar a DistilBERT
+
+# Tokenizer and model initialization
 tokenizer = AutoTokenizer.from_pretrained(PRETRAINED_MODEL)
-
-# Arreglar los indices
-train_df = train_df.reset_index(drop=True)
-eval_df = eval_df.reset_index(drop=True)
-# Crear datasets y dataloaders
-train_dataset = LibertyDataset(train_df, tokenizer, MAX_LEN)
-eval_dataset = LibertyDataset(eval_df, tokenizer, MAX_LEN)
-
-train_dataset.__len__()
-
-train_loader = DataLoader(train_dataset, batch_size=TRAIN_BATCH_SIZE, shuffle=True, num_workers=2)
-eval_loader = DataLoader(eval_dataset, batch_size=VALID_BATCH_SIZE, shuffle=False, num_workers=1)
-
-train_dataset.data
-
-# Inicializar el modelo
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model = LibertyPredictor(PRETRAINED_MODEL)
-model = model.to(device)
+model = LibertyPredictor(PRETRAINED_MODEL).to(device)
 
-
-# Congelar las capas de BERT excepto las dos últimas
-for name, param in model.bert.named_parameters():
-    if 'layer.4' in name or 'layer.5' in name:
+# Freeze GPT-2 layers except the last two
+for name, param in model.gpt2.named_parameters():
+    if 'h.10' in name or 'h.11' in name:
         param.requires_grad = True
     else:
         param.requires_grad = False
 
+# Dataset and DataLoader creation
+train_dataset = LibertyDataset(train_df.reset_index(drop=True), tokenizer, MAX_LEN)
+eval_dataset = LibertyDataset(eval_df.reset_index(drop=True), tokenizer, MAX_LEN)
+train_loader = DataLoader(train_dataset, batch_size=TRAIN_BATCH_SIZE, shuffle=True, num_workers=2)
+eval_loader = DataLoader(eval_dataset, batch_size=VALID_BATCH_SIZE, shuffle=False, num_workers=1)
 
-# Definir el optimizador y la función de pérdida
+# Optimizer and loss function
 optimizer = torch.optim.AdamW(params=model.parameters(), lr=LEARNING_RATE)
 criterion = nn.CrossEntropyLoss()
 
-# Función de entrenamiento
+# Training function
 def train(model, train_loader, optimizer, criterion, device):
     model.train()
     for _, data in enumerate(train_loader, 0):
@@ -142,14 +116,12 @@ def train(model, train_loader, optimizer, criterion, device):
         loss.backward()
         optimizer.step()
 
-# Función de evaluación
+# Evaluation function
 def evaluate(model, eval_loader, criterion, device):
     model.eval()
     total_loss = 0
-    all_personal_preds = []
-    all_economic_preds = []
-    all_personal_targets = []
-    all_economic_targets = []
+    all_personal_preds, all_economic_preds = [], []
+    all_personal_targets, all_economic_targets = [], []
 
     with torch.no_grad():
         for _, data in enumerate(eval_loader, 0):
@@ -172,30 +144,27 @@ def evaluate(model, eval_loader, criterion, device):
 
     return avg_loss, personal_f1, economic_f1
 
-# Entrenamiento del modelo
-
-with open('training_logs_'+FILE_NAME+'.txt', 'a') as log_file:
+# Training loop
+with open(f'training_logs_{FILE_NAME}.txt', 'a') as log_file:
     for epoch in range(EPOCHS):
         train(model, train_loader, optimizer, criterion, device)
         eval_loss, personal_f1, economic_f1 = evaluate(model, eval_loader, criterion, device)
         train_loss, train_personal_f1, train_economic_f1 = evaluate(model, train_loader, criterion, device)
-            
+        
         log_file.write(f'Epoch {epoch+1}/{EPOCHS}, '
-                        f'Train Personal F1: {train_personal_f1:.4f}, Train Economic F1: {train_economic_f1:.4f}, '
-                        f'Validation Loss: {eval_loss:.4f}, '
-                        f'Validation Personal F1: {personal_f1:.4f}, Validation Economic F1: {economic_f1:.4f}\n')
+                       f'Train Personal F1: {train_personal_f1:.4f}, Train Economic F1: {train_economic_f1:.4f}, '
+                       f'Validation Loss: {eval_loss:.4f}, '
+                       f'Validation Personal F1: {personal_f1:.4f}, Validation Economic F1: {economic_f1:.4f}\n')
 
         print(f'Epoch {epoch+1}/{EPOCHS}, Validation Loss: {eval_loss:.4f}, '
-                f'Personal Liberty F1: {personal_f1:.4f}, Economic Liberty F1: {economic_f1:.4f}')
-# Guardar el modelo
-MODEL_NAME = FILE_NAME + '_liberty_predictor.pth'
+              f'Personal Liberty F1: {personal_f1:.4f}, Economic Liberty F1: {economic_f1:.4f}')
+
+# Save the model
+MODEL_NAME = f'{FILE_NAME}_liberty_predictor.pth'
 torch.save(model.state_dict(), MODEL_NAME)
+print("Training completed and model saved.")
 
-print("Entrenamiento completado y modelo guardado.")
-
-
-
-# Función para hacer predicciones
+# Prediction function
 def predict(model, text, tokenizer, max_len, device):
     model.eval()
     encoded_text = tokenizer.encode_plus(
@@ -204,7 +173,6 @@ def predict(model, text, tokenizer, max_len, device):
         add_special_tokens=True,
         max_length=max_len,
         padding='max_length',
-        return_token_type_ids=True,
         truncation=True,
         return_tensors='pt'
     )
@@ -218,8 +186,8 @@ def predict(model, text, tokenizer, max_len, device):
     economic_score = torch.argmax(economic_liberty, dim=1).item() - 1
     return personal_score, economic_score
 
-# Ejemplo de uso
+# Example usage
 texto_ejemplo = "conservador"
 libertad_personal, libertad_economica = predict(model, texto_ejemplo, tokenizer, MAX_LEN, device)
-print(f"Libertad personal: {libertad_personal:.2f}")
-print(f"Libertad económica: {libertad_economica:.2f}")
+print(f"Libertad personal: {libertad_personal}")
+print(f"Libertad económica: {libertad_economica}")
