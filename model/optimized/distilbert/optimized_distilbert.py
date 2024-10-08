@@ -7,11 +7,11 @@ from torch.utils.data import Dataset, DataLoader
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import f1_score
 
-FILE_NAME = "disilbert_poli_ideo_opt"
+FILE_NAME = "manifesto_balanceado_distilbert_optimized"
 PRETRAINED_MODEL = "dccuchile/distilbert-base-spanish-uncased"
 
 # Load and preprocess data
-data_corpus_pre = pd.read_csv('../../../data/corpus/political_ideo_preprocessed.csv')
+data_corpus_pre = pd.read_csv('../../../data/corpus/manifesto_balanceado.csv')
 data_corpus_pre['text_processed'] = data_corpus_pre['text_processed'].astype(str)
 train_df, eval_df = train_test_split(data_corpus_pre, test_size=0.2, random_state=42)
 
@@ -108,6 +108,9 @@ criterion = nn.CrossEntropyLoss()
 def train(model, train_loader, optimizer, criterion, device, l1_lambda, l2_lambda):
     model.train()
     total_loss = 0
+    all_personal_preds, all_economic_preds = [], []
+    all_personal_targets, all_economic_targets = [], []
+
     for _, data in enumerate(train_loader, 0):
         ids = data['ids'].to(device, dtype=torch.long)
         mask = data['mask'].to(device, dtype=torch.long)
@@ -133,8 +136,17 @@ def train(model, train_loader, optimizer, criterion, device, l1_lambda, l2_lambd
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
+
+        all_personal_preds.extend(torch.argmax(personal_liberty, dim=1).cpu().numpy())
+        all_economic_preds.extend(torch.argmax(economic_liberty, dim=1).cpu().numpy())
+        all_personal_targets.extend(targets[:, 0].cpu().numpy())
+        all_economic_targets.extend(targets[:, 1].cpu().numpy())
     
-    return total_loss / len(train_loader)
+    avg_loss = total_loss / len(train_loader)
+    personal_f1 = f1_score(all_personal_targets, all_personal_preds, average='weighted')
+    economic_f1 = f1_score(all_economic_targets, all_economic_preds, average='weighted')
+
+    return avg_loss, personal_f1, economic_f1
 
 # Evaluation function
 def evaluate(model, eval_loader, criterion, device):
@@ -170,16 +182,19 @@ patience_counter = 0
 
 with open(f'training_logs_{FILE_NAME}.txt', 'a') as log_file:
     for epoch in range(EPOCHS):
-        train_loss = train(model, train_loader, optimizer, criterion, device, L1_LAMBDA, L2_LAMBDA)
-        eval_loss, personal_f1, economic_f1 = evaluate(model, eval_loader, criterion, device)
+        train_loss, train_personal_f1, train_economic_f1 = train(model, train_loader, optimizer, criterion, device, L1_LAMBDA, L2_LAMBDA)
+        eval_loss, eval_personal_f1, eval_economic_f1 = evaluate(model, eval_loader, criterion, device)
         
-        log_file.write(f'Epoch {epoch+1}/{EPOCHS}, '
+        log_message = (f'Epoch {epoch+1}/{EPOCHS}, '
                        f'Train Loss: {train_loss:.4f}, '
+                       f'Train Personal F1: {train_personal_f1:.4f}, '
+                       f'Train Economic F1: {train_economic_f1:.4f}, '
                        f'Validation Loss: {eval_loss:.4f}, '
-                       f'Validation Personal F1: {personal_f1:.4f}, Validation Economic F1: {economic_f1:.4f}\n')
-
-        print(f'Epoch {epoch+1}/{EPOCHS}, Train Loss: {train_loss:.4f}, Validation Loss: {eval_loss:.4f}, '
-              f'Personal Liberty F1: {personal_f1:.4f}, Economic Liberty F1: {economic_f1:.4f}')
+                       f'Validation Personal F1: {eval_personal_f1:.4f}, '
+                       f'Validation Economic F1: {eval_economic_f1:.4f}')
+        
+        log_file.write(log_message + '\n')
+        print(log_message)
 
         # Early stopping
         if eval_loss < best_eval_loss:
