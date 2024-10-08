@@ -7,11 +7,11 @@ from torch.utils.data import Dataset, DataLoader
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import f1_score
 
-FILE_NAME = "poli_bias_gpt2"
+FILE_NAME = "manifesto_completo_gpt2"
 PRETRAINED_MODEL = "datificate/gpt2-small-spanish"
 
 # Load and preprocess data
-data_corpus_pre = pd.read_csv('../../../data/corpus/political_bias_preprocessed.csv')
+data_corpus_pre = pd.read_csv('../../../data/corpus/manifesto_preprocessed.csv')
 data_corpus_pre['text_processed'] = data_corpus_pre['text_processed'].astype(str)
 train_df, eval_df = train_test_split(data_corpus_pre, test_size=0.2, random_state=42)
 
