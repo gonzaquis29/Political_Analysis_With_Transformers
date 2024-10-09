@@ -7,11 +7,11 @@ from torch.utils.data import Dataset, DataLoader
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import f1_score
 
-FILE_NAME = "poli_ideo_distilbert_optimized"
+FILE_NAME = "manifesto_bal_distilbert_optimized"
 PRETRAINED_MODEL = "dccuchile/distilbert-base-spanish-uncased"
 
 # Load and preprocess data
-data_corpus_pre = pd.read_csv('../../../data/corpus/political_ideo_preprocessed.csv')
+data_corpus_pre = pd.read_csv('../../../data/corpus/manifesto_balanceado.csv')
 data_corpus_pre['text_processed'] = data_corpus_pre['text_processed'].astype(str)
 train_df, eval_df = train_test_split(data_corpus_pre, test_size=0.2, random_state=42)
 
@@ -74,13 +74,13 @@ class LibertyDataset(Dataset):
 
 # Hyperparameters
 MAX_LEN = 128
-TRAIN_BATCH_SIZE = 32
+TRAIN_BATCH_SIZE = 64
 VALID_BATCH_SIZE = 32
 EPOCHS = 20
 LEARNING_RATE = 1e-04
 L1_LAMBDA = 1e-5
 L2_LAMBDA = 1e-4
-PATIENCE = 3
+PATIENCE = 5
 
 # Tokenizer and model initialization
 tokenizer = AutoTokenizer.from_pretrained(PRETRAINED_MODEL)
