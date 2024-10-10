@@ -1,5 +1,26 @@
 nohup: ignoring input
 /home/gquispe/.local/lib/python3.10/site-packages/transformers/tokenization_utils_base.py:1601: FutureWarning: `clean_up_tokenization_spaces` was not set. It will be set to `True` by default. This behavior will be depracted in transformers v4.45, and will be then set to `False` by default. For more details check this issue: https://github.com/huggingface/transformers/issues/31884
   warnings.warn(
-Epoch 1/20, Validation Loss: 1.0963, Personal Liberty F1: 0.8162, Economic Liberty F1: 0.7290
-Epoch 2/20, Validation Loss: 1.0697, Personal Liberty F1: 0.8246, Economic Liberty F1: 0.7372
+Epoch 1/20, Validation Loss: 1.0917, Personal Liberty F1: 0.8166, Economic Liberty F1: 0.7279
+Epoch 2/20, Validation Loss: 1.0690, Personal Liberty F1: 0.8214, Economic Liberty F1: 0.7365
+Epoch 3/20, Validation Loss: 1.0555, Personal Liberty F1: 0.8268, Economic Liberty F1: 0.7403
+Epoch 4/20, Validation Loss: 1.0669, Personal Liberty F1: 0.8292, Economic Liberty F1: 0.7447
+Epoch 5/20, Validation Loss: 1.0821, Personal Liberty F1: 0.8327, Economic Liberty F1: 0.7482
+Epoch 6/20, Validation Loss: 1.1142, Personal Liberty F1: 0.8318, Economic Liberty F1: 0.7462
+Epoch 7/20, Validation Loss: 1.1318, Personal Liberty F1: 0.8294, Economic Liberty F1: 0.7456
+Epoch 8/20, Validation Loss: 1.2801, Personal Liberty F1: 0.8179, Economic Liberty F1: 0.7402
+Epoch 9/20, Validation Loss: 1.3276, Personal Liberty F1: 0.8232, Economic Liberty F1: 0.7414
+Epoch 10/20, Validation Loss: 1.4492, Personal Liberty F1: 0.8209, Economic Liberty F1: 0.7373
+Epoch 11/20, Validation Loss: 1.5012, Personal Liberty F1: 0.8196, Economic Liberty F1: 0.7366
+Epoch 12/20, Validation Loss: 1.6117, Personal Liberty F1: 0.8156, Economic Liberty F1: 0.7325
+Epoch 13/20, Validation Loss: 1.7419, Personal Liberty F1: 0.8113, Economic Liberty F1: 0.7302
+Epoch 14/20, Validation Loss: 1.8703, Personal Liberty F1: 0.8099, Economic Liberty F1: 0.7257
+Epoch 15/20, Validation Loss: 2.0164, Personal Liberty F1: 0.8181, Economic Liberty F1: 0.7261
+Epoch 16/20, Validation Loss: 2.0421, Personal Liberty F1: 0.8120, Economic Liberty F1: 0.7267
+Epoch 17/20, Validation Loss: 2.0542, Personal Liberty F1: 0.8088, Economic Liberty F1: 0.7243
+Epoch 18/20, Validation Loss: 2.2267, Personal Liberty F1: 0.8123, Economic Liberty F1: 0.7227
+Epoch 19/20, Validation Loss: 2.3056, Personal Liberty F1: 0.8082, Economic Liberty F1: 0.7278
+Epoch 20/20, Validation Loss: 2.4572, Personal Liberty F1: 0.8099, Economic Liberty F1: 0.7228
+Training completed and model saved.
+Libertad personal: 0
+Libertad económica: 0
