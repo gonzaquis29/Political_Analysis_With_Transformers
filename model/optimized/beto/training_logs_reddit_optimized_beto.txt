@@ -1,0 +1,18 @@
+Epoch 1/20, Train Loss: 33.7551, Train Personal F1: 0.6419, Train Economic F1: 0.6934, Validation Loss: 1.0612, Validation Personal F1: 0.7205, Validation Economic F1: 0.7356
+Epoch 2/20, Train Loss: 33.5240, Train Personal F1: 0.7197, Train Economic F1: 0.7431, Validation Loss: 1.0507, Validation Personal F1: 0.7316, Validation Economic F1: 0.7476
+Epoch 3/20, Train Loss: 33.3682, Train Personal F1: 0.7451, Train Economic F1: 0.7765, Validation Loss: 1.0842, Validation Personal F1: 0.7183, Validation Economic F1: 0.7311
+Epoch 4/20, Train Loss: 33.2444, Train Personal F1: 0.7652, Train Economic F1: 0.8026, Validation Loss: 1.0418, Validation Personal F1: 0.7294, Validation Economic F1: 0.7514
+Epoch 5/20, Train Loss: 33.0978, Train Personal F1: 0.8054, Train Economic F1: 0.8201, Validation Loss: 1.0712, Validation Personal F1: 0.7210, Validation Economic F1: 0.7604
+Epoch 6/20, Train Loss: 32.9580, Train Personal F1: 0.8290, Train Economic F1: 0.8552, Validation Loss: 1.1340, Validation Personal F1: 0.7264, Validation Economic F1: 0.7520
+Epoch 7/20, Train Loss: 32.7873, Train Personal F1: 0.8585, Train Economic F1: 0.8833, Validation Loss: 1.3247, Validation Personal F1: 0.7305, Validation Economic F1: 0.7302
+Epoch 8/20, Train Loss: 32.6434, Train Personal F1: 0.8964, Train Economic F1: 0.9062, Validation Loss: 1.5843, Validation Personal F1: 0.7092, Validation Economic F1: 0.7347
+Epoch 9/20, Train Loss: 32.5789, Train Personal F1: 0.9053, Train Economic F1: 0.9159, Validation Loss: 1.4416, Validation Personal F1: 0.7038, Validation Economic F1: 0.7462
+
+Best Model Summary:
+Best Epoch: 4
+Best Validation Loss: 1.0418
+Best Train Loss: 33.2444
+Best Train Personal F1: 0.7652
+Best Train Economic F1: 0.8026
+Best Validation Personal F1: 0.7294
+Best Validation Economic F1: 0.7514
