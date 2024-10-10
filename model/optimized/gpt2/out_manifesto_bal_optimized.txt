@@ -1,0 +1,32 @@
+nohup: ignoring input
+/home/gquispe/.local/lib/python3.10/site-packages/transformers/tokenization_utils_base.py:1601: FutureWarning: `clean_up_tokenization_spaces` was not set. It will be set to `True` by default. This behavior will be depracted in transformers v4.45, and will be then set to `False` by default. For more details check this issue: https://github.com/huggingface/transformers/issues/31884
+  warnings.warn(
+Epoch 1/20, Train Loss: 122.6712, Train Personal F1: 0.7299, Train Economic F1: 0.6943, Validation Loss: 1.2114, Validation Personal F1: 0.7619, Validation Economic F1: 0.7266
+Epoch 2/20, Train Loss: 117.5923, Train Personal F1: 0.7605, Train Economic F1: 0.7225, Validation Loss: 1.1904, Validation Personal F1: 0.7699, Validation Economic F1: 0.7393
+Epoch 3/20, Train Loss: 115.5584, Train Personal F1: 0.7693, Train Economic F1: 0.7314, Validation Loss: 1.1610, Validation Personal F1: 0.7785, Validation Economic F1: 0.7416
+Epoch 4/20, Train Loss: 114.5660, Train Personal F1: 0.7749, Train Economic F1: 0.7384, Validation Loss: 1.1547, Validation Personal F1: 0.7817, Validation Economic F1: 0.7475
+Epoch 5/20, Train Loss: 114.0091, Train Personal F1: 0.7794, Train Economic F1: 0.7433, Validation Loss: 1.1469, Validation Personal F1: 0.7854, Validation Economic F1: 0.7458
+Epoch 6/20, Train Loss: 113.6658, Train Personal F1: 0.7837, Train Economic F1: 0.7464, Validation Loss: 1.1276, Validation Personal F1: 0.7876, Validation Economic F1: 0.7521
+Epoch 7/20, Train Loss: 113.4376, Train Personal F1: 0.7872, Train Economic F1: 0.7500, Validation Loss: 1.1381, Validation Personal F1: 0.7911, Validation Economic F1: 0.7559
+Epoch 8/20, Train Loss: 113.2796, Train Personal F1: 0.7898, Train Economic F1: 0.7533, Validation Loss: 1.1449, Validation Personal F1: 0.7869, Validation Economic F1: 0.7500
+Epoch 9/20, Train Loss: 113.1593, Train Personal F1: 0.7937, Train Economic F1: 0.7567, Validation Loss: 1.1260, Validation Personal F1: 0.7939, Validation Economic F1: 0.7534
+Epoch 10/20, Train Loss: 113.0662, Train Personal F1: 0.7975, Train Economic F1: 0.7596, Validation Loss: 1.1150, Validation Personal F1: 0.7961, Validation Economic F1: 0.7555
+Epoch 11/20, Train Loss: 112.9908, Train Personal F1: 0.8015, Train Economic F1: 0.7633, Validation Loss: 1.1581, Validation Personal F1: 0.7935, Validation Economic F1: 0.7538
+Epoch 12/20, Train Loss: 112.9322, Train Personal F1: 0.8044, Train Economic F1: 0.7656, Validation Loss: 1.1506, Validation Personal F1: 0.8013, Validation Economic F1: 0.7586
+Epoch 13/20, Train Loss: 112.8808, Train Personal F1: 0.8077, Train Economic F1: 0.7682, Validation Loss: 1.1211, Validation Personal F1: 0.7978, Validation Economic F1: 0.7600
+Epoch 14/20, Train Loss: 112.8333, Train Personal F1: 0.8124, Train Economic F1: 0.7731, Validation Loss: 1.1359, Validation Personal F1: 0.8008, Validation Economic F1: 0.7600
+Epoch 15/20, Train Loss: 112.7984, Train Personal F1: 0.8144, Train Economic F1: 0.7742, Validation Loss: 1.1216, Validation Personal F1: 0.8015, Validation Economic F1: 0.7611
+Early stopping triggered after 15 epochs
+
+Best Model Summary:
+Best Epoch: 10
+Best Validation Loss: 1.1150
+Best Train Loss: 113.0662
+Best Train Personal F1: 0.7975
+Best Train Economic F1: 0.7596
+Best Validation Personal F1: 0.7961
+Best Validation Economic F1: 0.7555
+
+Training completed.
+Libertad personal: 0
+Libertad económica: 0
