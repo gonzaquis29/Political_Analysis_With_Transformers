@@ -5,16 +5,23 @@ import torch
 from torch import nn
 from transformers import AutoTokenizer, AutoModel
 import numpy as np
+import nltk
+
+# Descargar tokenizer de oraciones si no lo tienes instalado
+nltk.download('punkt')
 
 # Define request/response models
 class TextRequest(BaseModel):
     text: str 
 
-class LibertyResponse(BaseModel):
+class SentencePrediction(BaseModel):
+    sentence: str
     personal_liberty: int
     economic_liberty: int
-    personal_liberty_probabilities: list
-    economic_liberty_probabilities: list
+
+class AnalysisResponse(BaseModel):
+    predictions: list[SentencePrediction]
+    global_metrics: dict  # Will include overall scores and Nolan mapping
 
 # Model definition (matches training code)
 class LibertyPredictor(nn.Module):
@@ -60,7 +67,7 @@ async def startup_event():
     
         # Initialize and load model
         model = LibertyPredictor(PRETRAINED_MODEL).to(device)
-        model.load_state_dict(torch.load(MODEL_PATH, map_location=device, weights_only=True))
+        model.load_state_dict(torch.load(MODEL_PATH, map_location=device))
         model.eval()
         
         print(f"Model and tokenizer loaded successfully on {device}")
@@ -68,10 +75,10 @@ async def startup_event():
         print(f"Error loading model: {str(e)}")
         raise e
 
-def predict_text(text: str):
-    # Tokenize input text
+def predict_sentence(sentence: str):
+    """Predict liberty scores for a single sentence."""
     encoded_text = tokenizer.encode_plus(
-        text,
+        sentence,
         None,
         add_special_tokens=True,
         max_length=MAX_LEN,
@@ -94,26 +101,59 @@ def predict_text(text: str):
         # Get predictions (converting from 0,1,2 to -1,0,1)
         personal_pred = torch.argmax(personal_liberty, dim=1).item() - 1
         economic_pred = torch.argmax(economic_liberty, dim=1).item() - 1
-        
-        # Convert probability tensors to lists
-        personal_probs = personal_probs.cpu().numpy().tolist()[0]
-        economic_probs = economic_probs.cpu().numpy().tolist()[0]
 
     return {
+        "sentence": sentence,
         "personal_liberty": personal_pred,
         "economic_liberty": economic_pred,
-        "personal_liberty_probabilities": personal_probs,
-        "economic_liberty_probabilities": economic_probs
     }
 
-@app.post("/predict", response_model=LibertyResponse)
-async def predict(request: TextRequest):
+def map_to_nolan_category(personal_score, economic_score):
+    """Map liberty scores to Nolan chart categories."""
+    if personal_score > 0 and economic_score > 0:
+        return "Libertarian"
+    elif personal_score > 0 and economic_score <= 0:
+        return "Liberal"
+    elif personal_score <= 0 and economic_score > 0:
+        return "Conservative"
+    else:
+        return "Authoritarian"
+
+@app.post("/analyze_text", response_model=AnalysisResponse)
+async def analyze_text(request: TextRequest):
     try:
         if not model or not tokenizer:
             raise HTTPException(status_code=500, detail="Model not loaded")
         
-        prediction = predict_text(request.text)
-        return prediction
+        # Split text into sentences
+        sentences = nltk.sent_tokenize(request.text)
+        
+        # Predict scores for each sentence
+        predictions = []
+        personal_scores = []
+        economic_scores = []
+
+        for sentence in sentences:
+            prediction = predict_sentence(sentence)
+            predictions.append(prediction)
+            personal_scores.append(prediction["personal_liberty"])
+            economic_scores.append(prediction["economic_liberty"])
+        
+        # Calculate global metrics
+        avg_personal_score = np.mean(personal_scores)
+        avg_economic_score = np.mean(economic_scores)
+        global_category = map_to_nolan_category(avg_personal_score, avg_economic_score)
+        
+        global_metrics = {
+            "avg_personal_score": avg_personal_score,
+            "avg_economic_score": avg_economic_score,
+            "nolan_category": global_category
+        }
+
+        return {
+            "predictions": predictions,
+            "global_metrics": global_metrics
+        }
     
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -124,8 +164,6 @@ async def health_check():
         return {"status": "healthy", "device": str(device)}
     return {"status": "model not loaded"}
 
-@app.get("/hello")
-async def hello():
-    return {"message": "Hello world"}
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+#uvicorn main:app --reload --host 127.0.0.1 --port 8000
