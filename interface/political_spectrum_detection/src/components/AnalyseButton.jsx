@@ -1,10 +1,15 @@
 // src/components/FileUpload.jsx
 import React from 'react';
 
-const AnalyseButton = () => {
+const AnalyseButton = ({ onClick, disabled }) => {
   return (
     <div className="button-area">
-      <button>Analizar Contenido</button>
+      <button 
+        onClick={onClick} 
+        disabled={disabled}
+      >
+        Analizar Contenido
+      </button>
     </div>
   );
 };
