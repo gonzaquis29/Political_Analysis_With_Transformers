@@ -2,10 +2,18 @@
 import React, { useState } from 'react';
 import FileUpload from './FileUpload';
 import AnalyseButton from './AnalyseButton';
-const TextInput = () => {
+
+const TextInput = ({ onAnalyze }) => {
   const [text, setText] = useState('');
+  
   const handleChange = (e) => {
     setText(e.target.value);
+  };
+  
+  const handleAnalyze = () => {
+    if (text.trim()) {
+      onAnalyze(text);
+    }
   };
   
   return (
@@ -20,10 +28,8 @@ const TextInput = () => {
         <span>Conteo de palabras: {text.split(' ').filter(w => w !== '').length}</span>
         <div className="button-group">
           <FileUpload />
-          <AnalyseButton/>
-
+          <AnalyseButton onClick={handleAnalyze} disabled={!text.trim()} />
         </div>
-        
       </div>
     </div>
   );

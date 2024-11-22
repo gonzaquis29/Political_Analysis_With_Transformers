@@ -4,10 +4,10 @@ import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Responsi
 const NolanChart = ({ politicalFreedom, economicFreedom }) => {
     // Datos para los dos ejes
     const data = [
-      { subject: 'Libertario', A: 70, fullMark: 100 },
-      { subject: 'Conservador', A: 20, fullMark: 100 },
-      { subject: 'Autoritario', A: 30, fullMark: 100 },
-      { subject: 'Liberal', A: 80, fullMark: 100 }
+      { subject: 'Libertario', A: politicalFreedom, fullMark: 100 },
+      { subject: 'Conservador', A:100 - economicFreedom, fullMark: 100 },
+      { subject: 'Autoritario', A: 100 - politicalFreedom, fullMark: 100 },
+      { subject: 'Liberal', A: economicFreedom, fullMark: 100 }
     ];
   
     return (

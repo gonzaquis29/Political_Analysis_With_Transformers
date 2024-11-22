@@ -6,7 +6,8 @@ from torch import nn
 from transformers import AutoTokenizer, AutoModel
 import numpy as np
 import nltk
-
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 # Descargar tokenizer de oraciones si no lo tienes instalado
 nltk.download('punkt')
 
@@ -47,6 +48,17 @@ app = FastAPI(
     version="1.0.0"
 )
 
+# CORS Configurations
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",  # Client URL
+        "http://127.0.0.1:3000"
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],  
+    allow_headers=["*"],  
+)
 # Global variables for model and tokenizer
 model = None
 tokenizer = None
