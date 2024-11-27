@@ -27,7 +27,7 @@ const TextInput = ({ onAnalyze }) => {
       <div className="footer">
         <span>Conteo de palabras: {text.split(' ').filter(w => w !== '').length}</span>
         <div className="button-group">
-          <FileUpload />
+          
           <AnalyseButton onClick={handleAnalyze} disabled={!text.trim()} />
         </div>
       </div>

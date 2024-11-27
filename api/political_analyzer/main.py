@@ -79,7 +79,7 @@ async def startup_event():
     
         # Initialize and load model
         model = LibertyPredictor(PRETRAINED_MODEL).to(device)
-        model.load_state_dict(torch.load(MODEL_PATH, map_location=device))
+        model.load_state_dict(torch.load(MODEL_PATH, map_location=device, weights_only=True))
         model.eval()
         
         print(f"Model and tokenizer loaded successfully on {device}")
